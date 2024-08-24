@@ -110,25 +110,22 @@ class Solution {
         }
         return true;
     }
-    pair<int, bool> isMaxHeap(struct Node* root){
-        if(root == NULL){
-            return make_pair(INT_MIN, true);
+    bool isMaxHeap(struct Node* root){
+        //case 1 leaf nodes always a heap
+        if(root->left == NULL && root->right == NULL) return true;
+        //case 2 if there is only one node attached (it is a complete binary tree)
+        if(root->right == NULL){
+            return (root->data > root->left->data);
         }
-        if(root->left == NULL && root->right == NULL){
-            return make_pair(root->data, true);
-        }
-        auto left = isMaxHeap(root->left);
-        auto right = isMaxHeap(root->right);
-        
-        if(left.first < root->data && right.first < root->data && left.second && right.second){
-            return make_pair(root->data, true);
-        }
-        return make_pair(max(left.first, right.first), false);
+        //case 3 both nodes are present
+        bool left = isMaxHeap(root->left);
+        bool right = isMaxHeap(root->right);
+        return (left && right && root->data > root->left->data && root->data > root->right->data);
     }
     bool isHeap(struct Node* tree) {
         if(isComplete(tree)){
-            auto ans = isMaxHeap(tree);
-            if(ans.second) return true;
+            bool ans = isMaxHeap(tree);
+            if(ans) return true;
         }
         return false;
     }
