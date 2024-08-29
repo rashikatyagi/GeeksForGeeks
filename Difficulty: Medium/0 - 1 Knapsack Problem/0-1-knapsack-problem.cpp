@@ -20,25 +20,45 @@ class Solution {
     //     return max(inclusion, exclusion);
     // }
     
-    int solveMem(int w, vector<int>& weight, vector<int>& val, int index, vector<vector<int> > &dp){
-        if(index == (weight.size() - 1)){
-            if(weight[index] <= w) return val[index];
-            return 0;
-        }
+    // int solveMem(int w, vector<int>& weight, vector<int>& val, int index, vector<vector<int> > &dp){
+    //     if(index == (weight.size() - 1)){
+    //         if(weight[index] <= w) return val[index];
+    //         return 0;
+    //     }
         
-        if(dp[w][index] != -1) return dp[w][index];
+    //     if(dp[w][index] != -1) return dp[w][index];
         
-        int inclusion = 0;
-        if(w >= weight[index]){
-            inclusion = val[index] + solveMem(w - weight[index], weight, val, index + 1, dp);
+    //     int inclusion = 0;
+    //     if(w >= weight[index]){
+    //         inclusion = val[index] + solveMem(w - weight[index], weight, val, index + 1, dp);
+    //     }
+    //     int exclusion = solveMem(w, weight, val, index + 1, dp);
+    //     dp[w][index] = max(inclusion, exclusion);
+    //     return dp[w][index];
+    // }
+    int solveTab(int w, vector<int>& wt, vector<int>& val){
+        //create a dp array
+        int n = wt.size();
+        vector<vector<int> > dp(w + 1, vector<int>(n + 1, -1));
+        // putting the base condition on call the capacities
+        for(int i = 0 ; i <= w ; i++){
+            dp[i][n] = 0;
         }
-        int exclusion = solveMem(w, weight, val, index + 1, dp);
-        dp[w][index] = max(inclusion, exclusion);
-        return dp[w][index];
+        //traversing over all rows from back (because the base case is stored at right)
+        for(int i = 0 ; i <= w ; i++){
+            for(int j = n - 1 ; j >= 0 ; j--){
+                int inclusion = 0;
+                if(i >= wt[j]){
+                    inclusion = val[j] + dp[i - wt[j]][j + 1];
+                }
+                int exclusion = dp[i][j + 1];
+                dp[i][j] = max(inclusion, exclusion);
+            }
+        }
+        return dp[w][0];
     }
     int knapSack(int W, vector<int>& wt, vector<int>& val) {
-        vector<vector<int> > dp(W + 1, vector<int>(wt.size(), -1));
-        return solveMem(W, wt, val, 0, dp);
+        return solveTab(W, wt, val);
     }
 };
 
