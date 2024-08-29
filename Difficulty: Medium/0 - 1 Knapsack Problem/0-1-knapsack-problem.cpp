@@ -7,20 +7,38 @@ using namespace std;
 class Solution {
   public:
     // Function to return max value that can be put in knapsack of capacity W.
-    int solveRE(int w, vector<int>& weight, vector<int>& val, int index){
-        if(index == weight.size() - 1){
+    // int solveRE(int w, vector<int>& weight, vector<int>& val){
+    //     if(index == weight.size() - 1){
+    //         if(weight[index] <= w) return val[index];
+    //         return 0;
+    //     }
+    //     int inclusion = 0;
+    //     if(w >= weight[index]){
+    //         inclusion = val[index] + solveRE(w - weight[index], weight, val, index + 1);
+    //     }
+    //     int exclusion = solveRE(w, weight, val, index + 1);
+    //     return max(inclusion, exclusion);
+    // }
+    
+    int solveMem(int w, vector<int>& weight, vector<int>& val, int index, vector<vector<int> > &dp){
+        if(index == (weight.size() - 1)){
             if(weight[index] <= w) return val[index];
-            else return 0;
+            return 0;
         }
+        
+        if(dp[w][index] != -1) return dp[w][index];
+        
         int inclusion = 0;
         if(w >= weight[index]){
-            inclusion = val[index] + solveRE(w - weight[index], weight, val, index + 1);
+            inclusion = val[index] + solveMem(w - weight[index], weight, val, index + 1, dp);
         }
-        int exclusion = solveRE(w, weight, val, index + 1);
-        return max(inclusion, exclusion);
+        int exclusion = solveMem(w, weight, val, index + 1, dp);
+        dp[w][index] = max(inclusion, exclusion);
+        return dp[w][index];
     }
     int knapSack(int W, vector<int>& wt, vector<int>& val) {
-        return solveRE(W, wt, val, 0);
+        vector<vector<int> > dp(W + 1, vector<int>(wt.size(), -1));
+        return solveMem(W, wt, val, 0, dp);
     }
 };
 
