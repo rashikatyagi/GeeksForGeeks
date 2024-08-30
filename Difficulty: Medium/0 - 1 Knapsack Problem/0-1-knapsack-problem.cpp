@@ -39,13 +39,9 @@ class Solution {
     int solveTab(int w, vector<int>& wt, vector<int>& val){
         //create a dp array
         int n = wt.size();
-        vector<vector<int> > dp(w + 1, vector<int>(n + 1, -1));
-        // putting the base condition on call the capacities
-        for(int i = 0 ; i <= w ; i++){
-            dp[i][n] = 0;
-        }
+        vector<vector<int> > dp(w + 1, vector<int>(n + 1, 0));
         //traversing over all rows from back (because the base case is stored at right)
-        for(int i = 0 ; i <= w ; i++){
+        for(int i = 1 ; i <= w ; i++){
             for(int j = n - 1 ; j >= 0 ; j--){
                 int inclusion = 0;
                 if(i >= wt[j]){
