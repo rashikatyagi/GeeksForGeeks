@@ -2,38 +2,48 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
 class Solution {
   public:
     // Function to detect cycle in an undirected graph.
-    bool dfs(int source, int parent, vector<int> adj[], vector<bool> &visited) {
-        //mark the souce in visited
-        visited[source] = 1;
-        
-        //check the adj list for adjacent nodes
-        for(auto it : adj[source]){
-            if(it == parent) continue;
-            else if(visited[it] == 0){
-                bool ans = dfs(it, source, adj, visited);
-                if(ans) return true;
+    bool bfsCycleDetect(int node, vector<vector<int>>& adj, unordered_map<int, int> &parent, vector<bool> &visited){
+        queue<int> q;
+        visited[node] = 1;
+        q.push(node);
+        parent[node] = -1;
+        while(!q.empty()) {
+            int currnode = q.front();
+            q.pop();
+            for(auto it : adj[currnode]){
+                if(visited[it] == 0){
+                    q.push(it);
+                    visited[it] = 1;
+                    parent[it] = currnode;
+                }
+                else if(parent[currnode] != it){
+                    return true;
+                }
             }
-            else return true;
         }
         return false;
     }
-    bool isCycle(int V, vector<int> adj[]) {
+    bool isCycle(vector<vector<int>>& adj) {
         // Code here
-        vector<bool> visited(V, false);
-        for(int i = 0 ; i < V ; i++){
-            if(visited[i] == 0){
-                bool ans = dfs(i, -1, adj, visited);
-                if(ans) return true;
+        int v = adj.size();
+        vector<bool> visited(v, 0);
+        unordered_map<int, int> parent;
+        for(int i = 0 ; i < v ; i++){
+            for(int j = 0 ; j < adj[i].size() ; j++){
+                if(visited[adj[i][j]] == 0){
+                    bool ans = bfsCycleDetect(adj[i][j], adj, parent, visited);
+                    if(ans) return true;
+                }
             }
         }
         return false;
     }
 };
-
 
 //{ Driver Code Starts.
 int main() {
@@ -42,7 +52,7 @@ int main() {
     while (tc--) {
         int V, E;
         cin >> V >> E;
-        vector<int> adj[V];
+        vector<vector<int>> adj(V);
         for (int i = 0; i < E; i++) {
             int u, v;
             cin >> u >> v;
@@ -50,11 +60,14 @@ int main() {
             adj[v].push_back(u);
         }
         Solution obj;
-        bool ans = obj.isCycle(V, adj);
+        bool ans = obj.isCycle(adj);
         if (ans)
             cout << "1\n";
         else
             cout << "0\n";
+
+        cout << "~"
+             << "\n";
     }
     return 0;
 }
