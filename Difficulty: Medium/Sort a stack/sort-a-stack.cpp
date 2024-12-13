@@ -52,22 +52,22 @@ public:
 
 /* The below method sorts the stack s 
 you are required to complete the below method */
-void insertelement(stack<int> &s, int data){
-    if(s.empty() || s.top() < data){
-        s.push(data);
+void insertAtPosition(stack<int> &st, int data){
+    if(st.empty() || st.top() < data){
+        st.push(data);
         return;
     }
-    int element = s.top();
-    s.pop();
-    insertelement(s, data);
-    s.push(element);
+    int element = st.top();
+    st.pop();
+    insertAtPosition(st, data);
+    st.push(element);
 }
 void SortedStack :: sort()
 {
    //Your code here
-   if(s.empty() || s.size() == 1) return;
+   if(s.empty()) return;
    int element = s.top();
    s.pop();
    sort();
-   insertelement(s, element);
+   insertAtPosition(s, element);
 }
